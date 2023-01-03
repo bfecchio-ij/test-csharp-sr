@@ -15,12 +15,13 @@ Faça um fork deste repositório.
 Ao finalizar o seu desenvolvimento, submeta um pull request para este repositório.
 
 ## Requisitos
-- A aplicação desenvolvida deve ser uma web application na arquitetura MVC utilizando a versão .NET Core 2.1 ou superior.
+- Desenvolva uma web application na arquitetura MVC utilizando a versão .NET Core 2.1 ou superior.
 - Implemente o padrão arquitetural CQRS utilizando a biblioteca Mediatr ou similares.
 - Utilize o Entity Framework Core como ORM para consultas e persitência de dados.
 - Desenvolva a aplicação com base no modelo relacional apresentado no início deste documento.
 - Desenvolva utilizando a abordagem de Code-First com o Entity Framework.
 - Utilize SQL in-memory ou SQL Express (localdb).
+- Cria quantas camadas e/ou projetos na solução que achar necessário.
 
 ## Dicas
 - Não se preocupe tanto com o Frontend, o foco aqui é Backend.
