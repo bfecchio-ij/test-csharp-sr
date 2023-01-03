@@ -20,9 +20,9 @@ Ao finalizar o seu desenvolvimento, submeta um pull request para este repositór
 - Utilize o Entity Framework Core como ORM para consultas e persitência de dados.
 - Desenvolva a aplicação com base no modelo relacional apresentado no início deste documento.
 - Desenvolva utilizando a abordagem de Code-First com o Entity Framework.
-- Utilize SQL in-memory ou SQL Express (localdb)
-- Não se preocupe tanto com o Frontend, o foco aqui é Backend :upside_down_face:!
+- Utilize SQL in-memory ou SQL Express (localdb).
 
 ## Dicas
+- Não se preocupe tanto com o Frontend, o foco aqui é Backend.
 - Aplique os seus conhecimentos e boas práticas de OOP, DDD, SOLID e Clean Code.
 - Não existe certo ou errado, o nosso objetivo é conhecer o seu estilo de programação.
