@@ -1,0 +1,155 @@
+﻿@page "/"
+@using InfoJobsPoc.Application.CandidateCommands.CandidateCommandRequest;
+@using InfoJobsPoc.Application.Interfaces.IQuery;
+@using InfoJobsPoc.Application.Querys;
+@using InfoJobsPoc.UI.Components
+@using Microsoft.EntityFrameworkCore;
+
+@inject ILogger<Index> Logger
+@inject IMediator mediator
+@inject NavigationManager NavigationManager;
+
+
+@inject IQueryApplication<CandidateModelQuery> query
+
+<PageTitle>Lista de candidatos</PageTitle>
+@if (candidateQueries == null)
+{
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="d-flex justify-content-center w-25 h-25">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="row">
+                                <div class="col-12 bg-gradient-primary shadow-primary border-radius-lg pt-4 pb-3 align-content-center">
+                                    <h6 class="text-white text-capitalize ps-3">Candidatos</h6>
+                                </div>
+                                <div class="col-12 m-1">
+                                    <div class="w-100 h-100 d-flex flex-column justify-content-center">
+                                        <button type="button" class="btn btn-link text-light px-3 mb-0 btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addCandidatoModal">
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
+                                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">#</th>
+                                            <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in candidateQueries)
+                                        {
+                                            <tr>
+                                                <td class="h-100 w-100">
+                                                    <div class="d-flex px-1 py-1 ">
+                                                        <div>
+                                                            <img src="imgs/batman2.jpg" class="avatar avatar-sm me-7 border-radius-lg" alt="@item.Name">
+                                                        </div>
+                                                        <div class="d-flex flex-column justify-content-center">
+                                                            <h6 class="mb-0 text-sm">@item.Name @item.Surname</h6>
+                                                            <p class="text-xs text-secondary mb-0">@item.Email</p>
+                                                            <span class="text-secondary text-xs font-weight-bold">@item.Birthdate</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @if (item.Experiences != null)
+                                                        @foreach (var item2 in item.Experiences)
+                                                        {
+                                                            <p class="text-xs font-weight-bold mb-0">@item2.Company</p>
+                                                            <p class="text-xs text-secondary mb-0">@item2.Job</p>
+                                                            <p class="text-xs text-secondary mb-0">@item2.BeginDate - @item2.EndDate</p>
+                                                        }
+                                                </td>
+                                                <td class="align-middle">
+                                                    <div class="ms-auto text-end">
+                                                        <button type="button" class="btn btn-link text-danger text-gradient px-3 mb-0" id="@item.Id" data-toggle="modal" data-target="#exampleModalCenter"
+                                                        @onclick="@(e=>remove(item.Id))">
+                                                            <i class="material-icons text-sm me-2">delete</i>Delete
+                                                        </button>
+                                                        <button @onclick="@(e=> currentCandidate=item)" type="button" class="btn btn-link text-light px-3 mb-0 btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditarCandidado">
+                                                            <i class="material-icons text-sm me-2">edit</i>edit
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+}
+
+<!-- Modal editar-->
+<div class="modal fade modal-fullscreen" id="modalEditarCandidado" tabindex="-1" aria-labelledby="modalEditarCandidadoLabel" aria-hidden="true">
+    <EditCandidateComponent        
+        candidate="@currentCandidate"         
+        />
+</div>
+<!-- Modal adicionar-->
+<div class="modal fade" id="addCandidatoModal" tabindex="-1" aria-labelledby="addCandidatoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addCandidatoModalLabel">Criar</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <AddCandidateComponent isload="@isload" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@(e=>reload())">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private IEnumerable<CandidateModelQuery> candidateQueries { get; set; }
+    private CandidateModelQuery currentCandidate { get; set; }
+    private bool isload { get; set; }
+    private async void remove(int id)
+    {
+        Logger.LogDebug("remove candidate id:" + id);
+        await mediator.Send(new RemoveCandidateRequest() { Id = id });
+        reload();
+    }
+    private async Task GetAll()
+    {
+        candidateQueries = await query.QueryList().ToListAsync();
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAll();
+    }
+    private void reload()
+    {
+        NavigationManager.NavigateTo("/", true);
+    }
+}

@@ -1,0 +1,81 @@
+﻿@using InfoJobsPoc.Application.CandidateCommands.CandidateCommandRequest;
+@using Microsoft.Extensions.Logging;
+@using System.Text.Json;
+@using System.Linq;
+@inject ILogger<AddCandidateRequest> Logger
+@inject IMediator mediator
+@if (show)
+{
+    <div class="alert alert-primary" role="alert">
+
+        <span class="text-white">@msg</span>
+
+    </div>
+}
+<EditForm Model="@addrequest" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="container">
+        <fieldset class="row">
+            <div class="form-group col-12">
+                <label for="addCandidateForm.Name">
+                    Name
+                    <InputText id="addCandidateForm.Name" @bind-Value="addrequest.Name" />
+                </label>
+            </div>
+            <div class="form-group col-12">
+                <label for="addCandidateForm.Surname">
+                    Surname <InputText id="addCandidateForm.Surname" @bind-Value="addrequest.Surname" />
+                </label>
+            </div>
+            <div class="form-group col-12">
+                <label for="addCandidateForm.Birthdate">
+                    Birthdate  <InputDate @bind-Value="addrequest.Birthdate" @bind-Value:format="dd/MM/yyyy" />
+                </label>
+            </div>
+            <div class="form-group col-12">
+                <label for="addCandidateForm.Email">
+                    Email <InputText id="addCandidateForm.Email" @bind-Value="addrequest.Email" />
+                </label>
+            </div>
+        </fieldset>
+        <fieldset>
+            <div class="form-group col-12"><button type="submit" class="btn btn-primary" disabled=@isload>Salvar</button></div>
+        </fieldset>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public bool isload { get; set; }
+    private AddCandidateRequest addrequest { get; set; } = new()
+        {
+            Birthdate = new DateTime(1994, 07, 21),
+            Email = "",
+            Name = "",
+            Surname = "",
+        };
+
+    private bool show { get; set; } = false;
+    private string msg { get; set; } = "";
+
+    private async Task showAlert(string _msg)
+    {
+        msg = _msg;
+        show = true;
+        await Task.Delay(5000);
+        show = false;
+        msg = "";
+    }
+    private async Task HandleValidSubmit()
+    {
+        isload = true;
+        var jsonOpt = new JsonSerializerOptions { WriteIndented = true };
+        Logger.LogInformation("call Command Handler");
+        var notification = await mediator.Send(addrequest);
+        var _msg = notification.Messages.Select(x => x.msg).First();
+        await showAlert(_msg);
+        isload = false;
+    }
+}

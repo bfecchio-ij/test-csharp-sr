@@ -1,0 +1,182 @@
+﻿@using InfoJobsPoc.Application.CandidateCommands.CandidateCommandRequest;
+@using InfoJobsPoc.Application.ExperienceCommands.ExperienceCommandRequest;
+@using InfoJobsPoc.Application.Querys;
+@using Microsoft.Extensions.Logging;
+@using System.Text.Json;
+@using System.Linq;
+@inject ILogger<EditCandidateComponent> Logger
+@inject IMediator mediator
+@inject NavigationManager NavigationManager;
+
+@if (candidate == null)
+{
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="d-flex justify-content-center w-25 h-25">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    @if (show)
+    {
+        <div class="alert alert-primary" role="alert">
+            <span class="text-white">@msgEdit</span>
+        </div>
+    }
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="modalEditarCandidadoLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label">Name</label>
+                    <input type="text" @bind="candidate.Name" class="form-control" placeholder="loribao">
+
+                    <label for="exampleFormControlInput1" class="form-label">Surname</label>
+                    <input type="text" @bind="candidate.Surname" class="form-control" placeholder="sanjinez">
+
+                    <label for="exampleFormControlInput1" class="form-label">Email</label>
+                    <input type="email" @bind="candidate.Email" class="form-control" placeholder="loribao@hotmail.com" disabled>
+
+                    <label for="exampleFormControlInput1" class="form-label">Birthdate</label>
+                    <input type="date" @bind="candidate.Birthdate" class="form-control" placeholder="dd/MM/yyyy">
+                </div>
+                <div class="mb-3">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Company</th>
+                                <th scope="col">Job</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Salary</th>
+                                <th scope="col">BeginDate</th>
+                                <th scope="col">EndDate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var exp in candidate.Experiences)
+                            {
+                                <tr>
+                                    <th scope="row">
+                                        <button type="button" class="btn btn-link text-danger text-gradient px-3 mb-0" id="@exp.Id" data-toggle="modal" data-target="#exampleModalCenter"
+                                        @onclick="@(e => RemoveExp(exp.Id))">
+                                            <i class="material-icons text-sm me-2">delete</i>Delete @exp.Id
+                                        </button>
+                                    </th>
+                                    <td><input type="text" @bind="exp.Company" /></td>
+                                    <td><input type="text" @bind="exp.Job" /></td>
+                                    <td><input type="text" @bind="exp.Description" /></td>
+                                    <td><input type="number" @bind="exp.Salary" /></td>
+                                    <td><input type="date" @bind="exp.BeginDate" /></td>
+                                    <td><input type="date" @bind="@exp.EndDate"> </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-info w-10 align-content-center" @onclick="(e=>AddColumExp())">+</button>
+                <button type="submit" class="btn btn-primary" disabled=@isTaskRunning @onclick="@(e=>submit())">Salvar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="@(e=>reload())">Close</button>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter]
+    public CandidateModelQuery candidate { get; set; }
+    private bool show { get; set; } = false;
+    private string msgEdit { get; set; } = "";
+    private bool isTaskRunning { get; set; } = false;
+    private async Task showAlert(string _msg)
+    {
+        msgEdit = _msg;
+        show = true;
+        await Task.Delay(5000);
+        show = false;
+        msgEdit = "";
+    }
+    private async Task submit()
+    {
+        isTaskRunning = true;
+        var jsonOpt = new JsonSerializerOptions { WriteIndented = true };
+        Logger.LogInformation("call Command Handler");
+        var notification = await mediator.Send(new UpdateCandidateRequest()
+            {
+                Birthdate = candidate.Birthdate ?? new DateTime(2000, 1, 1),
+                Email = candidate.Email,
+                Id = candidate.Id,
+                Name = candidate.Name,
+                Surname = candidate.Surname,
+                experiences = candidate.Experiences.Select(x => new UpdateCandidateExperience
+                {
+                    BeginDate = x.BeginDate,
+                    Company = x.Company,
+                    Description = x.Description,
+                    EndDate = x.EndDate,
+                    Id = x.Id,
+                    Job = x.Job,
+                    Salary = x.Salary
+                })
+            });
+        var _msg = notification.Messages.Select(x => x.msg).ToList();
+        candidate = notification.Data;
+        await showAlert(JsonSerializer.Serialize(_msg));
+        isTaskRunning = false;
+    }
+    private void AddColumExp()
+    {
+        candidate.Experiences?.Add(new ExperienceModelQuery()
+            {
+                BeginDate = DateTime.Now,
+            });
+    }
+    private async Task AddExp(ExperienceModelQuery experience)
+    {
+        isTaskRunning = true;
+        var jsonOpt = new JsonSerializerOptions { WriteIndented = true };
+        Logger.LogInformation("call Command Handler");
+        var notification = await mediator.Send(new AddExperienceRequest()
+            {
+                BeginDate = experience.BeginDate,
+                Company = experience.Company,
+                Description = experience.Description,
+                EmailCandidate = candidate.Email,
+                EndDate = experience.EndDate,
+                Job = experience.Job,
+                Salary = experience.Salary
+            });
+
+        var _msg = notification.Messages.Select(x => x.msg).First();
+        await showAlert(_msg);
+        isTaskRunning = false;
+    }
+    private async Task RemoveExp(int Id)
+    {
+        Logger.LogInformation("call Command Handler");
+
+        if(Id==0){
+            candidate.Experiences = candidate.Experiences.Where(x => x.Id != Id).ToList();
+        }
+        else
+        {
+            await mediator.Send(new RemoveExperienceRequest()
+                {
+                    Id = Id
+                });
+            reload();
+        }
+        
+    }
+    private void reload()
+    {
+        NavigationManager.NavigateTo("/", true);
+    }
+}
