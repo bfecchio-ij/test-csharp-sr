@@ -1,0 +1,169 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DC.TesteCandidatos.Web.Models.CandidateExperienceIncludeViewModel
+@{
+}
+
+<div class="container">
+    <div class="row text-center">
+        <div class="col-12">
+            <h1>Include Experiences</h1>
+        </div>
+    </div>
+    <div class="row pt-1 px-5 justify-content-start">
+        <div class="col-2">
+            <a class="btn btn-primary" asp-controller="Candidates" asp-action="EditCandidates" asp-route-id="@Model.IdCandidate">Voltar</a>
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="row py-2">
+            <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+        </div>
+    }
+    <div class="row pt-5 px-5">
+        <form class="border-dark border px-3 py-3 rounded">
+            <div class="row justify-content-start">
+                <div class="col-5">
+                    <label for="experiences-candidate" class="col-form-label">Candidate:</label>
+                    <label class="form-control" id="experiences-candidate">@Html.DisplayFor(model => model.Fullname)</label>
+                </div>
+            </div>
+            <div class="row justify-content-between py-3">
+                <div class="col-7">
+                    <div class="list-group">
+                        @foreach (var experience in Model.Experiences)
+                        {
+                            <a id="@experience.IdCandidateExperiences" class="list-group-item flex-column align-items-start"
+                           asp-controller="CandidateExperience" asp-action="DetailsExperience" asp-route-id="@experience.IdCandidateExperiences"
+                           asp-route-historic="include">
+                                <div class="d-flex w-100 justify-content-between">
+
+                                    <h5 class="mb-1">@Html.DisplayFor(modelItem => experience.Job)</h5>
+                                    <small>@experience.BeginDate.ToShortDateString()</small>
+                                </div>
+                                <p class="mb-1">
+                                    @(experience.Description.Length > 100 ? String.Format($"{experience.Description.Substring(0, 100)}...")
+                                        : experience.Description)
+                                </p>
+                                <small>@experience.Company</small>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="col-5">
+                    <div class="row">
+                        <div class="col-12 justify-content-start">
+                            <label for="experiences-company" class="col-form-label">Company:</label>
+                            <input type="text" class="form-control" id="experiences-company" asp-for="NewExperience.Company" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 justify-content-start">
+                            <label for="experiences-job" class="col-form-label">Job:</label>
+                            <input type="text" class="form-control" id="experiences-job" asp-for="NewExperience.Job" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 justify-content-start">
+                            <label for="experiences-salary" class="col-form-label">Salary:</label>
+                            <input type="currency" class="form-control" id="experiences-salary" asp-for="NewExperience.Salary" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 justify-content-start">
+                            <label for="experiences-Begin" class="col-form-label">Begin Date:</label>
+                            <input type="date" class="form-control" id="experiences-Begin" asp-for="NewExperience.BeginDate" />
+                        </div>
+                        <div class="col-6 justify-content-start">
+                            <label for="experiences-End" class="col-form-label">End Date:</label>
+                            <input type="date" class="form-control" id="experiences-End" asp-for="NewExperience.EndDate" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label for="experiences-ActualJob" class="col-form-label" style="word-wrap:break-word">Actual Job?</label>
+                            <input type="checkbox" style="vertical-align:middle;" id="experiences-ActualJob" onclick="disableEndDate()" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 justify-content-start">
+                            <label for="experiences-description" class="col-form-label">Description:</label>
+                            <textarea class="form-control" id="experiences-description" rows="10" cols="80" asp-for="NewExperience.Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="row justify-content-between my-3 py-2">
+                        <input type="hidden" asp-for="Experiences" />
+                        <input type="hidden" asp-for="Fullname" />
+                        <input type="hidden" asp-for="IdCandidate" />
+                        <div class="col-4">
+                            <button class="btn btn-secondary w-100" asp-controller="CandidateExperience" asp-action="ResetExperiences">Reset</button>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary w-100" asp-controller="CandidateExperience" asp-action="SaveExperience">Include</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-end">
+                <div col-2>
+                    <a class="btn btn-primary w-100" asp-controller="Candidates" asp-action="EditCandidates" asp-route-id="@Model.IdCandidate">Publish</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script src="~/lib/jquery-modal/jquery.modal.min.js" type="text/javascript"></script>
+<script>
+    var currencyInput = document.querySelector('input[type="currency"]')
+    var currency = 'USD' // https://www.currency-iso.org/dam/downloads/lists/list_one.xml
+
+    // format inital value
+    onBlur({ target: currencyInput })
+
+    // bind event listeners
+    currencyInput.addEventListener('focus', onFocus)
+    currencyInput.addEventListener('blur', onBlur)
+
+
+    function localStringToNumber(s) {
+        return Number(String(s).replace(/[^0-9.-]+/g, ""))
+    }
+
+    function onFocus(e) {
+        var value = e.target.value;
+        e.target.value = value ? localStringToNumber(value) : ''
+    }
+
+    function onBlur(e) {
+        var value = e.target.value
+
+        var options = {
+            maximumFractionDigits: 2,
+            currency: currency,
+            style: "currency",
+            currencyDisplay: "symbol"
+        }
+
+        e.target.value = (value || value === 0)
+            ? localStringToNumber(value).toLocaleString(undefined, options)
+            : ''
+    }
+
+    function disableEndDate() {
+        if (document.getElementById("experiences-ActualJob").checked)
+            document.getElementById("experiences-End").disabled = "true";
+        else
+            document.getElementById("experiences-End").disabled = "";
+    }
+
+    $(".list-group-item").dblclick(function (e) {
+        var id = $(this).attr("id");
+        $(this).attr("")
+
+    });
+    
+</script>

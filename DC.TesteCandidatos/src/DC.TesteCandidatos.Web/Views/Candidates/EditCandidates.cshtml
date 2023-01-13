@@ -1,0 +1,89 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DC.TesteCandidatos.Web.Models.CandidatesEditViewModel
+@{
+}
+
+<div class="container">
+    <div class="row text-center">
+        <div class="col-12">
+            <h1>Candidate</h1>
+        </div>
+    </div>
+    <div class="row pt-1 px-5 justify-content-start">
+        <div class="col-2">
+            <a class="btn btn-primary" asp-controller="Candidates" asp-action="ListarCandidates">Voltar</a>
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="row py-2">
+            <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+        </div>
+    }
+    <div class="row pt-5 px-5">
+        <form class="border-dark border px-3 py-3 rounded">
+            <div class="row justify-content-between">
+                <div class="col-5">
+                    <label for="candidates-name" class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="candidates-name" placeholder="Name" asp-for="Name" />
+                    <input type="hidden" asp-for="LastName" />
+                </div>
+                <div class="col-5">
+                    <label for="candidates-surname" class="col-form-label">Surname:</label>
+                    <input type="text" class="form-control" id="candidates-surname" placeholder="Surname" asp-for="Surname" />
+                    <input type="hidden" asp-for="LastSurname"/>
+                </div>
+            </div>
+            <div class="row justify-content-between">
+                <div class="col-5">
+                    <label for="candidates-birth" class="col-form-label">Birth Date</label>
+                    <input type="date" class="form-control" id="candidates-birth" asp-for="BirthDate" />
+                    <input type="hidden" asp-for="LastBirthDate"/>
+                </div>
+                <div class="col-5">
+                    <label for="candidates-email" class="col-form-label">E-mail</label>
+                    <input type="text" class="form-control" id="candidates-email" placeholder="email@example.com" asp-for="Email" />
+                    <input type="hidden" asp-for="LastEmail" />
+                </div>
+            </div>
+            <div class="row justify-content-between py-3 px-3">
+                <h4>Experiences:</h4>
+                <div class="col-12">
+                    <div class="list-group" id="listGroupExperiences">
+                        @foreach (var experience in Model.lstExperiences)
+                        {
+                            <a id="@experience.IdCandidateExperiences" class="list-group-item flex-column align-items-start"
+                           asp-controller="CandidateExperience" asp-action="DetailsExperience" asp-route-id="@experience.IdCandidateExperiences"
+                            asp-route-historic="details">
+                                <div class="d-flex w-100 justify-content-between">
+
+                                    <h5 class="mb-1">@Html.DisplayFor(modelItem => experience.Job)</h5>
+                                    <small>@experience.BeginDate.ToShortDateString()</small>
+                                </div>
+                                <p class="mb-1">
+                                    @(experience.Description.Length > 100 ? String.Format($"{experience.Description.Substring(0, 100)}...")
+                                        : experience.Description)
+                                </p>
+                                <small>@experience.Company</small>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-end my-3 py-2">
+                <input type="hidden" asp-for="Id" />
+                <div class="col-2 my-1">
+                    <a class="btn btn-info w-100" asp-controller="CandidateExperience" asp-action="InclueExperience" asp-route-id="@Model.Id">Experiences</a>
+                </div>
+                <div class="col-2 my-1">
+                    <button class="btn btn-danger w-100" asp-controller="Candidates" asp-action="DeleteCandidate" asp-route-id="@Model.Id">Delete</button>
+                </div>
+                <div class="col-2 my-1">
+                    <button class="btn btn-primary w-100" asp-controller="Candidates" asp-action="SaveEditCandidate" asp-route-id="@Model.Id">Edit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

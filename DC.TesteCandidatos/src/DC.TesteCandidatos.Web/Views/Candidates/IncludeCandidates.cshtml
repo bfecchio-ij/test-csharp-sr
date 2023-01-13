@@ -1,0 +1,57 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DC.TesteCandidatos.Web.Models.CandidatesIncludeViewModel
+@{
+}
+<div class="container">
+    <div class="row text-center">
+        <div class="col-12">
+            <h1>Create new Candidate</h1>
+        </div>
+    </div>
+    <div class="row pt-1 px-5 justify-content-start">
+        <div class="col-2">
+            <a class="btn btn-primary" asp-controller="Candidates" asp-action="ListarCandidates">Voltar</a>
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="row py-2">
+            <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+        </div>
+    }
+    <div class="row pt-5 px-5">
+        <form class="border-dark border px-3 py-3 rounded">
+            <div class="row justify-content-between">
+                <div class="col-5">
+                    <label for="candidates-name" class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" id="candidates-name" placeholder="Name" asp-for="Name" />
+                </div>
+                <div class="col-5">
+                    <label for="candidates-surname" class="col-form-label">Surname:</label>
+                    <input type="text" class="form-control" id="candidates-surname" placeholder="Surname" asp-for="Surname" />
+                </div>
+            </div>
+            <div class="row justify-content-between">
+                <div class="col-5">
+                    <label for="candidates-birth" class="col-form-label">Birth Date</label>
+                    <input type="date" class="form-control" id="candidates-birth" asp-for="BirthDate" />
+                </div>
+                <div class="col-5">
+                    <label for="candidates-email" class="col-form-label">E-mail</label>
+                    <input type="text" class="form-control" id="candidates-email" placeholder="email@example.com" asp-for="Email" />
+                </div>
+            </div>
+            <div class="row justify-content-end my-3 py-2">
+                <div class="col-2">
+                    <button class="btn btn-secondary w-100" asp-controller="Candidates" asp-action="ResetCandidate">Reset</button>
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary w-100" asp-controller="Candidates" asp-action="CreateCandidate">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

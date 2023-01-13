@@ -1,0 +1,54 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model DC.TesteCandidatos.Web.Models.CandidatesListarViewModel
+@{
+}
+
+<div class="container" id="candidatesPage">
+    <div class="row text-center">
+        <div class="col-12">
+            <h1 id="TitleCandidates">
+                Candidates
+            </h1>
+        </div>
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-2">
+            <a class="btn btn-primary" asp-controller="Candidates" asp-action="IncludeCandidates">Create Candidate</a>
+        </div>
+    </div>
+    @if (!String.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="row py-2">
+            <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+        </div>
+    }
+    <div class="row py-5 px-5 d-flex justify-content-center">
+        <div class="col-12">
+            <table id="candidatesTable" class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Birth Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.lstCandidadtes)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => row.Email)</td>
+                            <td>@Html.DisplayFor(modelItem => row.Name) @Html.DisplayFor(modelItem => row.Surname)</td>
+                            <td>@row.Birthdate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <a style="text-decoration: none;" asp-controller="Candidates" asp-action="EditCandidates" asp-route-id="@row.IdCandidates">Editar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
