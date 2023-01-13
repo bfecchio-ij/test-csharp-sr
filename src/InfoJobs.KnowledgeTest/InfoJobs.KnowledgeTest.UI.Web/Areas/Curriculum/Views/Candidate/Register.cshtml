@@ -1,0 +1,173 @@
+﻿@model InfoJobs.KnowledgeTest.UI.Web.Areas.Curriculum.ViewModels.Candidate.RegisterViewModel
+
+@{
+    Layout = "~/Views/Shared/_Template.cshtml";
+    ViewData["Title"] = "Register Candidate";
+}
+
+@section CSS
+    {
+    <!-- JQuery DataTable Css -->
+    <link type="text/css" rel="stylesheet" href="~/assets/plugins/jquery-datatable/dataTables.bootstrap4.min.css" asp-append-version="true">
+    <link type="text/css" rel="stylesheet" href="~/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" asp-append-version="true" />
+    <link type="text/css" rel="stylesheet" href="~/assets/plugins/bootstrap-select/css/bootstrap-select.css" asp-append-version="true" />
+    <link type="text/css" rel="stylesheet" href="~/assets/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" asp-append-version="true" />
+    <link type="text/css" rel="stylesheet" href="~/assets/css/toastr.css" asp-append-version="true">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/custom/bootstrap-select-custom.css" asp-append-version="true" />
+}
+
+<section class="content">
+    <div class="block-header">
+        <div class="col-lg-11 col-md-11 col-sm-11">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/Home"><i class="zmdi zmdi-home"></i> Home</a></li>
+                <li class="breadcrumb-item"> Curriculum</li>
+                <li class="breadcrumb-item active"> Candidate</li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="space-4"></div>
+        <a class="btn btn-sm btn-secondary pull-right" href="/Curriculum/Candidate/Index">
+            Voltar
+        </a>
+        <div class="row clearfix">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="header">
+                        <span class="space-20"></span>
+                        <h2 class="blue">
+                            <i class="glyphicon glyphicon-user"></i> <strong>
+                                Candidate Registration
+                            </strong>
+                        </h2>
+                    </div>
+                    <div class="body">
+                        <div class="space-2"></div>
+                        <div class="well well-sm">
+                            <h4 class="green smaller lighter">Personal Data</h4>
+                        </div>
+
+                        <form id="frmRegister" name="frmRegister" method="post" action="/Curriculum/Candidate/Register">
+                            @Html.HiddenFor(p => p.Candidate.Id)
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="control-group">
+                                        <label class="control-label bolder blue">
+                                            Name:
+                                        </label> <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(p => p.Candidate.Name, new { @class = "form-control", required = "required", maxlength ="50" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="control-group">
+                                        <label class="control-label bolder blue">
+                                            Surname:
+                                        </label> <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(p => p.Candidate.Surname, new { @class = "form-control", required = "required", maxlength ="150" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="control-group">
+                                        <label class="control-label bolder blue">
+                                            Birthdate:
+                                        </label> <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(p => p.Candidate.Birthdate, "{0:yyyy-MM-dd}", new { @class = "form-control", required = "required", type = "date", max = DateTime.Now.ToString("yyyy-MM-dd") })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="control-group">
+                                        <label class="control-label bolder blue">
+                                            Email:
+                                        </label>
+                                        @if (Model.Candidate.Id.Equals(0))
+                                        {
+                                            <span class="text-danger">*</span>
+                                            @Html.TextBoxFor(p => p.Candidate.Email, new { @class = "form-control", required = "required", maxlength ="250", type="mail" })
+                                        }
+                                        else
+                                        {
+                                            @Html.TextBoxFor(p => p.Candidate.Email, new { @class = "form-control", @readonly = "readonly" })
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-10"></div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12 col-lg-12">
+                                    <button class="btn btn-sm btn-success pull-right" type="submit" id="btnSaveCandidate">
+                                        <i class="glyphicon glyphicon-check"></i> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="@(Model.Candidate.Id.Equals(0) ? "hidden": string.Empty)" id="dvCandidateExperiences">
+                            <div class="space-10"></div>
+                            <div class="well well-sm">
+                                <h4 class="blue smaller lighter">Candidate Experiences</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table" id="tbCandidateExperience">
+                                        <thead>
+                                            <tr>
+                                                <th class="align-middle">Company</th>
+                                                <th class="align-middle">Job</th>
+                                                <th class="align-middle">Salary</th>
+                                                <th class="align-middle">Begin Date</th>
+                                                <th class="align-middle">End Date</th>
+                                                <th class="align-middle">Insert Date</th>
+                                                <th class="align-middle">Modify Date</th>
+                                                <th class="align-middle">
+                                                    <button class="btn btn-xs btn-info btn-round btn-circle" id="btnAddExperience">
+                                                        <i class="glyphicon glyphicon-plus"></i> Add
+                                                    </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @await Html.PartialAsync("_CandidateExperienceRowTable", Model.CandidateExperience)
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section JS
+    {
+    <!-- Jquery DataTable Plugin Js -->
+    <script type="text/javascript" src="~/assets/bundles/datatablescripts.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/dataTables.buttons.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.colVis.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.flash.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.html5.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.print.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/pages/tables/jquery-datatable.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/jquery.tmpl.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.pt-BR.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/bootstrap-select/js/bootstrap-select.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/bootstrap-select/js/i18n/defaults-pt_BR.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/jquery.maskedinput.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/jquery.validate.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/toastr.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/moment.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-maskmoney/jquery.maskMoney.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/custom/curriculum/candidate/register.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,23 @@
+﻿@model IEnumerable<InfoJobs.KnowledgeTest.UI.Web.ApiHelper.ViewModels.Curriculum.CandidateExperienceViewModel>
+
+@foreach (var candidateExperience in Model)
+{
+    <tr data-id="@candidateExperience.Id">
+        <td class="align-middle">@candidateExperience.Company</td>
+        <td class="align-middle">@candidateExperience.Job</td>
+        <td class="align-middle">@string.Format("{0:C}",candidateExperience.Salary)</td>
+        <td class="align-middle">@candidateExperience.BeginDate?.ToShortDateString()</td>
+        <td class="align-middle">@candidateExperience.EndDate?.ToShortDateString()</td>
+        <td class="align-middle">@candidateExperience.InsertDate.ToShortDateString()</td>
+        <td class="align-middle">@candidateExperience.ModifyDate?.ToShortDateString()</td>
+        <th class="align-middle">
+            <button class="btn btn-xs btn-warning btn-round btn-circle editExperience" title="Edit">
+                <i class="glyphicon glyphicon-edit"></i> Edit
+            </button>
+
+            <button class="btn btn-xs btn-danger btn-round btn-circle deleteExperience" title="Delete">
+                <i class="glyphicon glyphicon-trash"></i> Delete
+            </button>
+        </th>
+    </tr>
+}

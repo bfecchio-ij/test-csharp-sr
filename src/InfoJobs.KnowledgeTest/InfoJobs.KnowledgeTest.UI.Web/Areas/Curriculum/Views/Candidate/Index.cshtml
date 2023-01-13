@@ -1,0 +1,96 @@
+﻿@model InfoJobs.KnowledgeTest.UI.Web.Areas.Curriculum.ViewModels.Candidate.IndexViewModel
+
+@{
+    Layout = "~/Views/Shared/_Template.cshtml";
+    ViewData["Title"] = "Candidates";
+}
+
+@section CSS
+    {
+    <!-- JQuery DataTable Css -->
+    <link type="text/css" rel="stylesheet" href="~/assets/plugins/jquery-datatable/dataTables.bootstrap4.min.css" asp-append-version="true">
+    <link type="text/css" rel="stylesheet" href="~/assets/css/custom/curriculum/candidates/index.css" asp-append-version="true" />
+}
+
+<section class="content">
+    <div class="block-header">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/Home"><i class="zmdi zmdi-home"></i> Home</a></li>
+                <li class="breadcrumb-item"> Curriculum</li>
+                <li class="breadcrumb-item active"> Candidates</li>
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row clearfix">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="header">
+                        <div class="pull-right">
+                            <a class="btn btn-primary btn-sm" href="/curriculum/candidate/register">
+                                <i class="glyphicon glyphicon-plus"></i> Register
+                            </a>
+                        </div>
+                        <h2><strong>Candidates</strong></h2>
+                    </div>
+                    <div class="body">
+                        <div class="space-14"></div>
+                        <div class="row clearfix">
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <table class="table table-bordered table-striped table-hover" id="tbCandidates">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">Name</th>
+                                            <th class="text-center">Surname</th>
+                                            <th class="text-center">Birthdate</th>
+                                            <th class="text-center">Email</th>
+                                            <th class="text-center">Insert Date</th>
+                                            <th class="text-center">Modify Date</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var candidate in Model.Candidates)
+                                        {
+                                            <tr data-id="@candidate.Id">
+                                                <td class="align-middle text-center">@candidate.Name</td>
+                                                <td class="align-middle text-center">@candidate.Surname</td>
+                                                <td class="align-middle text-center">@candidate.Birthdate?.ToShortDateString()</td>
+                                                <td class="align-middle text-center">@candidate.Email</td>
+                                                <td class="align-middle text-center">@candidate.InsertDate.ToShortDateString()</td>
+                                                <td class="align-middle text-center">@candidate.ModifyDate?.ToShortDateString()</td>
+                                                <td class="text-center">
+                                                    <a class="btn btn-warning btn-xs btn-round btn-circle edit" title="Edit candidate" href="/Curriculum/Candidate/Edit/@candidate.Id">
+                                                        <i class="fa fa-edit"></i> Edit
+                                                    </a>
+
+                                                    <button class="btn btn-xs btn-danger btn-round btn-circle delete" title="Delete candidate">
+                                                        <i class="fa fa-trash"></i> Delete
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section JS
+    {
+    <script type="text/javascript" src="~/assets/bundles/datatablescripts.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/dataTables.buttons.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.colVis.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.flash.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.html5.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/plugins/jquery-datatable/buttons/buttons.print.min.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/pages/tables/jquery-datatable.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/assets/js/custom/curriculum/candidate/index.js" asp-append-version="true"></script>
+}

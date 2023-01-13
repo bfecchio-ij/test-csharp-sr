@@ -1,0 +1,79 @@
+﻿@model InfoJobs.KnowledgeTest.UI.Web.ApiHelper.ViewModels.Curriculum.CandidateExperienceViewModel
+
+<form id="frmRegisterCandidateExperience" name="frmRegisterCandidateExperience" method="post" action="/Curriculum/Candidate/RegisterExperience">
+    @Html.HiddenFor(p => p.Id)
+    @Html.HiddenFor(p => p.IdCandidate)
+    <div class="row">
+        <div class="col-md-8">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    Company:
+                </label> <span class="text-danger">*</span>
+                @Html.TextBoxFor(p => p.Company, new { @class = "form-control", required = "required", maxlength ="100" })
+            </div>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    Job:
+                </label> <span class="text-danger">*</span>
+                @Html.TextBoxFor(p => p.Job, new { @class = "form-control", required = "required", maxlength ="100" })
+            </div>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    Description:
+                </label> <span class="text-danger">*</span>
+                @Html.TextAreaFor(p => p.Description, new { @class = "form-control", required = "required", rows = "10", maxlength="4000" })
+            </div>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    Salary:
+                </label> <span class="text-danger">*</span>
+                @Html.TextBoxFor(p => p.Salary, new { @class = "form-control", required = "required" })
+            </div>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    Begin Date:
+                </label> <span class="text-danger">*</span>
+                @Html.TextBoxFor(p => p.BeginDate, "{0:yyyy-MM-dd}", new { @class = "form-control", required = "required", type = "date", max = DateTime.Now.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
+    </div>
+    <div class="space-4"></div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="control-group">
+                <label class="control-label bolder blue">
+                    End Date:
+                </label>
+                @Html.TextBoxFor(p => p.EndDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date", max = DateTime.Now.ToString("yyyy-MM-dd") })
+            </div>
+        </div>
+    </div>
+    <div class="space-10"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-lg-12">
+            <button class="btn btn-sm btn-success pull-right" type="submit" id="btnSaveExperience">
+                <i class="glyphicon glyphicon-check"></i> Save
+            </button>
+        </div>
+    </div>
+</form>
